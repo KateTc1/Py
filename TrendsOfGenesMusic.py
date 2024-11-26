@@ -59,21 +59,19 @@ def mien(df):
     plt.show()
 def phantan():
 
-    # Dữ liệu mẫu
-    acousticness_trend = df.groupby('Year')['Acousticness'].mean().dropna()
+    # Selecting 'Valence' and 'Danceability' for the scatter plot
+    x_valence = df['Valence']
+    y_danceability = df['Danceability']
 
-    # Vẽ biểu đồ phân tán
-    plt.scatter(acoustic, popularity, color='blue', edgecolor='black')
-
-    # Thêm tiêu đề và nhãn cho các trục
-    plt.title('Mối quan hệ giữa Acoustic và Popularity')
-    plt.xlabel('Acoustic')
-    plt.ylabel('Popularity')
-
-    # Hiển thị biểu đồ
-    plt.grid(True)
+    # Creating scatter plot to show the relationship between Valence and Danceability
+    plt.figure(figsize=(10, 6))
+    plt.scatter(x_valence, y_danceability, alpha=0.6, color='green')
+    plt.title('Scatter Plot of Valence vs Danceability')
+    plt.xlabel('Valence (Positivity)')
+    plt.ylabel('Danceability')
+    plt.grid(alpha=0.3)
     plt.show()
 
-duong()
-mien(df)
+
+
 phantan()
