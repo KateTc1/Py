@@ -273,8 +273,37 @@ def Over_view():
     # Hiển thị biểu đồ
     plt.tight_layout()
     plt.show()
+def Top_10_album_most_song():
+    album_counts = df.groupby('Album Name').size().reset_index(name='Track Count')
+    album_counts = album_counts.sort_values('Track Count', ascending=False)
+    top_album = album_counts.head(10)
+    colors = [
+    "#D5BAFF",  # Light Lavender
+    "#E2BAFF",  # Pastel Purple
+    "#FFCCE5",  # Pastel Magenta
+    "#FFC4C4",   # Soft Red
+    "#FFB3BA",  # Pastel Pink
+    "#FFDFBA",  # Pastel Peach
+    "#FFFFBA",  # Pastel Yellow
+    "#B9FBC6",  # Pastel Green
+    "#BAFFFF",  # Light Cyan
+    "#BAE1FF"  # Pastel Blue
+    ]
+    # Plot the bar chart with similar pastel colors
+    plt.figure(figsize=(12, 8))
+    plt.barh(
+        top_album['Album Name'], 
+        top_album['Track Count'], 
+        color=colors # Apply similar pastel colors
+    )
     
-heat_map()
+    plt.xlabel('Số lượng track', fontsize=14)
+    plt.ylabel('Album', fontsize=14)
+    plt.title('Top 10 album có nhiều bài hát trong top nhất', fontsize=16)
+    plt.tight_layout()
+    plt.gca().invert_yaxis()  # Reverse Y-axis so the top artist is on top
+    plt.show()
+Top_10_album_most_song()
 
 
 
