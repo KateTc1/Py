@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as numpy
 from matplotlib.colors import LinearSegmentedColormap
+import seaborn as sns
 df = pd.read_excel("C:\\Users\\ASUS\\Desktop\\python\\Spotify\\cleaned_data (1).xlsx")
 
 def duong():
@@ -10,19 +11,23 @@ def duong():
     valence_trend = df.groupby('Year')['Valence'].mean().dropna()
     energy_trend = df.groupby('Year')['Energy'].mean().dropna()
     danceability_trend = df.groupby('Year')['Danceability'].mean().dropna()
-
+    liveness_trend = df.groupby('Year')['Liveness'].mean().dropna()
+    speechiness_trend = df.groupby('Year')['Speechiness'].mean().dropna()
 
     # Plot the trend of Acousticness over the years
     plt.figure(figsize=(12, 8))
-    plt.plot(acousticness_trend.index, acousticness_trend.values, marker='o', label = 'acoustic')
-    plt.plot(valence_trend.index, valence_trend.values, marker = 'o', label = 'valence')
-    plt.plot(energy_trend.index, energy_trend.values, marker = 'o', label = 'energy')
-    plt.plot(danceability_trend.index, danceability_trend.values, marker = 'o', label = 'danceability')
+    plt.plot(acousticness_trend.index, acousticness_trend.values, label = 'acoustic')
+    plt.plot(valence_trend.index, valence_trend.values, label = 'valence')
+    plt.plot(energy_trend.index, energy_trend.values, label = 'energy')
+    plt.plot(danceability_trend.index, danceability_trend.values, label = 'danceability')
+    plt.plot(liveness_trend.index, liveness_trend.values, label = 'Liveness')
+    plt.plot(speechiness_trend.index, speechiness_trend.values, label = 'speechiness')
+    
     plt.title('Xu hướng đặc điểm của âm thanh', fontsize=16)
     plt.xlabel('Năm', fontsize=12)
     plt.ylabel('Trung bình', fontsize=12)
     plt.axis('tight')
-    plt.legend(loc = 'best')
+    plt.legend(loc = 'upper right')
     plt.grid(True)
     plt.show()
 def mien(df):
@@ -77,7 +82,7 @@ def phantan():
 import matplotlib.pyplot as plt
 import pandas as pd
 
-def TopTrack(df):
+def TopTrack():
     # Nhóm dữ liệu theo 'Track Name' và tính trung bình cộng của 'Popularity'
     df_grouped = df.groupby('Track Name', as_index=False)['Popularity'].sum()
     
@@ -111,7 +116,7 @@ def Max_Popularity_Track_Over_Year():
     plt.title('Độ Phổ Biến của bài hát phổ biến nhất từng năm')
     plt.xlabel('Năm(s)')
     plt.ylabel('Độ Phổ Biến (Trung Bình)')
-    plt.xticks(ticks=yearly_max_popularity.index.astype(int), labels=yearly_max_popularity.index, rotation=90, ha='right')
+    plt.xticks(ticks=yearly_max_popularity.index.astype(int), labels=yearly_max_popularity.index.astype(int), rotation=90, ha='right')
     plt.tight_layout()  # Đảm bảo bố cục gọn gàng
     plt.show()
 
@@ -146,7 +151,130 @@ def Top_10_Artist(df):
     plt.gca().invert_yaxis()  # Reverse Y-axis so the top artist is on top
     plt.tight_layout()
     plt.show()
+def heat_map():
+    # Extract numerical columns related to audio features
+    numerical_columns = [
+        'Danceability', 'Energy', 'Speechiness', 'Acousticness','Loudness','Mode','Time Signature','Track Duration (ms)',
+        'Instrumentalness', 'Liveness', 'Valence', 'Tempo', 'Year','Popularity'
+    ]
+    numerical_data = df[numerical_columns]
 
-Max_Popularity_Track_Over_Year()
+    # Calculate the correlation matrix
+    correlation_matrix = numerical_data.corr()
+
+    # Set up the figure size
+    plt.figure(figsize=(10, 8))
+
+    # Create a heatmap for the correlation matrix
+    sns.heatmap(correlation_matrix, annot=True, fmt=".2f", cmap="coolwarm", cbar=True, square=True)
+
+    # Add title and adjust layout
+    plt.title("Bản đồ nhiệt của sự tương quan của các dữ liệu", fontsize=16)
+    plt.tight_layout()
+
+    # Display the heatmap
+    plt.show()
+def test():
+    
+    plot_data = df[['Tempo', 'Danceability', 'Popularity']]
+
+    # Create scatter plot with color based on 'Popularity'
+    plt.figure(figsize=(8, 6))
+    scatter = plt.scatter(
+        plot_data['Tempo'], 
+        plot_data['Danceability'], 
+        c=plot_data['Popularity'], 
+        cmap='viridis', 
+        s=240,  # Point size
+        alpha=0.7  # Transparency
+    )
+
+    # Add color bar for popularity
+    plt.colorbar(scatter, label='Popularity')
+
+    # Add labels and title
+    plt.xlabel('Tempo')
+    plt.ylabel('Danceability')
+    plt.title('Correlation Between Tempo and Danceability with Popularity Color-Coding')
+
+    # Display plot
+    plt.tight_layout()
+    plt.show()
+def do_phan_bo_cua_do_pho_bien():
+    plt.figure(figsize=(10, 6))
+    sns.histplot(df['Popularity'], bins=20, kde=True, color='skyblue')
+
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Phân Bố Độ Phổ Biến của Các Bài Hát', fontsize=16)
+    plt.xlabel('Độ Phổ Biến', fontsize=14)
+    plt.ylabel('Tần Suất', fontsize=14)
+
+    # Hiển thị biểu đồ
+    plt.tight_layout()
+    plt.show()
+def Over_view():
+    plt.figure(figsize=(10, 6))
+    
+    plt.subplot(3, 4, 1)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Acousticness'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Acouticness', fontsize=16)
+    
+    plt.subplot(3, 4, 2)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Valence'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Valence', fontsize=16)
+    
+    plt.subplot(3, 4, 3)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Liveness'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Liveness', fontsize=16)
+    
+    plt.subplot(3, 4, 4)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Speechiness'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Speechiness', fontsize=16)
+    
+    plt.subplot(3, 4, 5)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Energy'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Energy', fontsize=16)
+    
+    plt.subplot(3, 4, 6)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Tempo'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Tempo', fontsize=16)
+    
+    plt.subplot(3, 4, 7)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Loudness'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Loudness', fontsize=16)
+    
+    plt.subplot(3, 4, 8)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Danceability'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Danceability', fontsize=16)
+    
+    plt.subplot(3, 4, 9)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Track Duration (ms)'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Track Duration (ms)', fontsize=16)
+    
+    plt.subplot(3, 4, 10)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Instrumentalness'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Instrumentalness', fontsize=16)
+    
+    plt.subplot(3, 4, 11)  # (số dòng, số cột, vị trí)
+    sns.histplot(df['Explicit'], bins=20, kde=True, color='skyblue')
+    # Cài đặt tiêu đề và nhãn cho biểu đồ
+    plt.title('Explicit', fontsize=16)
+    
+    # Hiển thị biểu đồ
+    plt.tight_layout()
+    plt.show()
+    
+heat_map()
+
 
 
