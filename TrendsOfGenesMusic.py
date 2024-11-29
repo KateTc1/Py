@@ -5,8 +5,8 @@ from matplotlib.colors import LinearSegmentedColormap
 import seaborn as sns
 df = pd.read_excel("C:\\Users\\ASUS\\Desktop\\python\\Spotify\\cleaned_data (1).xlsx")
 
-def duong():
-    # Group data by year and calculate the average Acousticness for each year
+def Trend_of_sound_feature():
+    #Nhóm các dữ liệu tính bằng trung bình theo năm
     acousticness_trend = df.groupby('Year')['Acousticness'].mean().dropna()
     valence_trend = df.groupby('Year')['Valence'].mean().dropna()
     energy_trend = df.groupby('Year')['Energy'].mean().dropna()
@@ -14,7 +14,7 @@ def duong():
     liveness_trend = df.groupby('Year')['Liveness'].mean().dropna()
     speechiness_trend = df.groupby('Year')['Speechiness'].mean().dropna()
 
-    # Plot the trend of Acousticness over the years
+    # Vẽ biểu đồ đường thể hiện xu hướng cuả từng chỉ số
     plt.figure(figsize=(12, 8))
     plt.plot(acousticness_trend.index, acousticness_trend.values, label = 'acoustic')
     plt.plot(valence_trend.index, valence_trend.values, label = 'valence')
@@ -30,10 +30,10 @@ def duong():
     plt.legend(loc = 'upper right')
     plt.grid(True)
     plt.show()
-def mien(df):
+def mien():
 
     # Sắp xếp theo năm
-    df = df.sort_values("Year")
+    # df = df.sort_values("Year")
 
     # Chuyển đổi True/False thành 1/0
     df['Explicit'] = df['Explicit'].map({True: 1, False: 0})
@@ -64,23 +64,21 @@ def mien(df):
     plt.tight_layout() 
     # Hiển thị biểu đồ
     plt.show()
-def phantan():
+def scattter_acoustic_vs_energy():
+    
+    #Chọn chỉ số aucousticness và energy để vẽ biểu đồ
+    x_valence = df['Acousticness']
+    y_danceability = df['Energy']
 
-    # Selecting 'Valence' and 'Danceability' for the scatter plot
-    x_valence = df['Valence']
-    y_danceability = df['Danceability']
-
-    # Creating scatter plot to show the relationship between Valence and Danceability
+    #Tạo biểu đồ phân tán thể hiện sự tương quan của 2 chỉ số
     plt.figure(figsize=(10, 6))
     plt.scatter(x_valence, y_danceability, alpha=0.6, color='green')
-    plt.title('Scatter Plot of Valence vs Danceability')
-    plt.xlabel('Valence (Positivity)')
-    plt.ylabel('Danceability')
+    plt.title('Sự tương quan của acousticness và energy')
+    plt.xlabel('Aucoustic')
+    plt.ylabel('Energy')
     plt.grid(alpha=0.3)
     plt.show()
 
-import matplotlib.pyplot as plt
-import pandas as pd
 
 def TopTrack():
     # Nhóm dữ liệu theo 'Track Name' và tính trung bình cộng của 'Popularity'
@@ -121,7 +119,7 @@ def Mean_Popularity_Track_Over_Year():
     plt.show()
 
 def Top_10_Artist():
-    # Count the number of tracks per artist
+    # Đếm số track của từng nghệ sĩ bằng cách lấy kích thước của từng phần tử sau khi nhóm lại theo tên nghệ sĩ
     artist_counts = df.groupby('Artist Name(s)').size().reset_index(name='Track Count')
     artist_counts = artist_counts.sort_values('Track Count', ascending=False)
     top_artists = artist_counts.head(10)
@@ -145,7 +143,6 @@ def Top_10_Artist():
         color=colors, # Apply similar pastel colors
         zorder=5
     )
-    
     plt.xlabel('Số lượng track', fontsize=14)
     plt.ylabel('Nghệ sĩ', fontsize=14)
     plt.title('Top 10 nghệ sĩ có nhiều bài hát trong top', fontsize=16)
@@ -178,13 +175,13 @@ def heat_map():
     plt.show()
 def test():
     
-    plot_data = df[['Tempo', 'Danceability', 'Popularity']]
+    plot_data = df[['Acousticness', 'Liveness', 'Popularity']]
 
     # Create scatter plot with color based on 'Popularity'
     plt.figure(figsize=(8, 6))
     scatter = plt.scatter(
-        plot_data['Tempo'], 
-        plot_data['Danceability'], 
+        plot_data['Acousticness'], 
+        plot_data['Liveness'], 
         c=plot_data['Popularity'], 
         cmap='viridis', 
         s=240,  # Point size
@@ -320,8 +317,18 @@ def Top_10_album_most_song():
     plt.gca().invert_yaxis()  # Reverse Y-axis so the top album is at the top
     plt.grid(True, color='gray', linestyle='--', linewidth=0.5, axis='x', zorder=0)
     plt.show()
-Mean_Popularity_Track_Over_Year()
-test()
-
-
+def Comparison_solo_collab():
+    df['song_type'] = df['Artist Name(s)'].apply(lambda x: 'collab' if isinstance(x, str) and len(x.split(", ")) >= 2 else 'solo')
+    avg_popularity = df.groupby('song_type')['Popularity'].mean()
+    fig, ax = plt.subplots()
+    avg_popularity.plot(kind='bar', color=['blue', 'orange'], ax=ax, zorder=5)
+    ax.set_facecolor('whitesmoke')
+    # Thiết lập tiêu đề và nhãn cho biểu đồ
+    ax.set_title('Mức độ phổ biến trung bình của bài hát Collab và Solo', fontsize=14)
+    ax.set_xlabel('Loại bài hát', fontsize=12)
+    ax.set_ylabel('Mức độ phổ biến trung bình', fontsize=12)
+    ax.grid(True,zorder = 0, color ='white',linewidth=0.5, axis='y')
+    # Hiển thị biểu đồ
+    plt.show()
+Comparison_solo_collab()
 
