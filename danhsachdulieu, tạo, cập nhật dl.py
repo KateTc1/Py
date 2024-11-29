@@ -6,6 +6,8 @@ from tkinter import ttk, messagebox
 file_path = 'D:/python do an cuoi ki/cleaned_data.csv'
 data = pd.read_csv(file_path)
 
+data.columns = data.columns.str.strip().str.lower()
+
 # Hàm hiển thị dữ liệu
 def display_data(tree, df):
     # Làm mới Treeview để hiển thị dữ liệu mới
