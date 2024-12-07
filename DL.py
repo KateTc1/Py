@@ -10,7 +10,7 @@ import random
 file_path = 'top_10000_1950-now.csv'
 df = pd.read_csv(file_path)
 
-# Xóa cột "Album Genres"
+# Xóa cột "Album Genres"  và key
 columns_to_drop = ['Album Genres', 'Key']
 df = df.drop(columns=columns_to_drop, errors='ignore')
 
@@ -65,7 +65,26 @@ for r_idx, row in enumerate(dataframe_to_rows(df, index=False, header=True), 1):
             cell.font = Font(bold=True)
 
 # Lưu file Excel
-output_path = 'cleaneddata.xlsx'
-wb.save(output_path)
+# Biến toàn cục lưu đường dẫn file
+current_file_path = None
 
-print("Dữ liệu đã được lưu vào file Excel với định dạng:", output_path)
+def save_excel_auto(workbook, file_name=None):
+    global current_file_path
+    
+    if file_name:
+        current_file_path = file_name
+    
+    if not current_file_path:
+        raise ValueError("Tên file chưa được cung cấp. Vui lòng chỉ định tên file khi lưu lần đầu.")
+
+    try:
+        workbook.save(current_file_path)
+        print(f"Dữ liệu đã được tự động lưu vào file: {current_file_path}")
+    except Exception as e:
+        print(f"Lỗi khi lưu file: {e}")
+
+save_excel_auto(wb, "cleaneddata.xlsx")
+
+""""
+save_excel_auto(wb) Gọi hàm để cập nhật lại file
+"""
